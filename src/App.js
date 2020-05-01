@@ -12,5 +12,5 @@ class App extends Component {
     /* return React.createElement('div', {className: 'App'}, React.createElement('h1', null, 'does this work now?') ); */
   }
 }
-
+//Hej Med dig
 export default App;
