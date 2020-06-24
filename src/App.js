@@ -5,32 +5,43 @@ import Person from './Person/Person';
 class App extends Component {
   state = {
     persons: [
-      {name: 'Max', age: 28},
-      {name: 'Manu', age: 29},
-      {name: 'Steffen', age: 28}
+      {id: 'dsa2', name: 'Max', age: 28},
+      {id: 'asd4', name: 'Manu', age: 29},
+      {id: '5123fd',name: 'Steffen', age: 28}
     ],
-    otherState: 'Some other value'
+    otherState: 'Some other value',
+    showPersons: false
+  }
+ 
+  nameChangedHandler = (event, id) => {
+    const personIndex = this.state.persons.findIndex(p => {
+      return p.id === id;
+    });
+
+    const person = {
+      ...this.state.persons[personIndex]
+      
+    };
+    //const person = Object.assign({}, this.state.persons[personIndex]); gør det samme som ovenover hvor vi bruger spread operator til at kopier. 
+
+    person.name = event.target.value;
+
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
+
+    this.setState( {persons: persons});
   }
 
-  switchNameHandler = (newName) => {
-    // DONT DO THIS: this.state.persons[0].name = 'Steffen Juhl';
-    this.setState( {
-      persons: [
-      {name: newName, age: 28},
-      {name: 'Manu', age: 29},
-      {name: 'Steffen', age: 38}
-      ] 
-    })
+  deletePersonHandler = (personIndex) => {
+    //const persons = this.state.persons.slice();
+    const persons = [...this.state.persons]; // den her gør egentligt det samme som den overover. the ... er en spread operator og kommer fra ES6. OBS. Arrayet kopiers og der bliver ikke bare sat en pointer. 
+    persons.splice(personIndex, 1);
+    this.setState({persons :persons});
   }
 
-  nameChangedHandler = (event) => {
-    this.setState( {
-      persons: [
-      {name: 'Max', age: 28},
-      {name: event.target.value, age: 29},
-      {name: 'Steffen', age: 38}
-      ] 
-    })
+  togglePersonsHandler = () => {
+      const doesShow = this.state.showPersons;
+      this.setState({showPersons: !doesShow}); //her bliver det modsatte sat. Så vi siger showPersons er lige med ikke doesshow, eller det modsatte af hvad doesShow er lige nu. 
   }
   
   render() {
@@ -41,23 +52,29 @@ class App extends Component {
       padding:'8px',
       cursor: 'pointer'
     };
+
+    let persons = null;
+    if (this.state.showPersons) {
+        persons = (
+          <div>
+            {this.state.persons.map((person, index) => {
+              return <Person
+              click= {() => this.deletePersonHandler(index)} //this.deletePersonHandler er en fuction. Når det står på en linje vil alt efter => blive returnet som om der stod => return somecode.
+              name ={person.name} 
+              age = {person.age}
+              key = {person.id}
+              changed={(event) => this.nameChangedHandler(event, person.id)}/>
+            })}
+        </div> 
+        );
+    }
     return (
       <div className="App">
         <h1>Hi, iam react App</h1>
         <p>this is realle working!</p>
         <button style={style}
-        onClick={() => this.switchNameHandler('Hans!!')}>Switch Name</button> {/* () => this.switchNameHandler er en fuction. Når det står på en linje vil alt efter => blive returnet som om der stod => return somecode. Man kan også gøre det normalt ved at tilføje { retrun somecode} */}
-        <Person
-         name={this.state.persons[0].name} 
-         age={this.state.persons[0].age} />
-        <Person 
-         name={this.state.persons[1].name} 
-         age={this.state.persons[1].age}
-         click={this.switchNameHandler.bind(this, 'Hans')}
-         changed={this.nameChangedHandler}>My hobbies: Racing</Person>
-        <Person 
-         name={this.state.persons[2].name} 
-         age={this.state.persons[2].age}/>
+        onClick={this.togglePersonsHandler}>Switch Name</button> 
+        {persons}
       </div>
     );
     /* return React.createElement('div', {className: 'App'}, React.createElement('h1', null, 'does this work now?') ); */
