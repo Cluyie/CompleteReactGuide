@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import './App.css';
+import classes from './App.module.css';
 import Person from './Person/Person';
+
+
+
 
 class App extends Component {
   state = {
@@ -41,20 +44,15 @@ class App extends Component {
 
   togglePersonsHandler = () => {
       const doesShow = this.state.showPersons;
-      this.setState({showPersons: !doesShow}); //her bliver det modsatte sat. Så vi siger showPersons er lige med ikke doesshow, eller det modsatte af hvad doesShow er lige nu. 
+      this.setState({showPersons: !doesShow}); //her bliver det modsatte sat. Så vi siger showPersons er lig med ikke doesshow, eller det modsatte af hvad doesShow er lige nu. 
   }
   
   render() {
-    const style = {
-      backgroundColor:  'white',
-      font: 'inherit',
-      border:'1px solid blue',
-      padding:'8px',
-      cursor: 'pointer'
-    };
-
+    
     let persons = null;
-    if (this.state.showPersons) {
+    let btnClass = '';
+
+    if (this.state.showPersons ) {
         persons = (
           <div>
             {this.state.persons.map((person, index) => {
@@ -67,13 +65,26 @@ class App extends Component {
             })}
         </div> 
         );
+
+        btnClass = classes.Red;
     }
+
+    const assignedclasses = [];
+    if (this.state.persons.length <= 2) {
+      assignedclasses.push(classes.red); //classes = ['red' ]
+    }
+    if(this.state.persons.length<=1) {
+      assignedclasses.push(classes.bold); //classes = ['red', 'bold']
+    }
+
+
     return (
-      <div className="App">
+      <div className={classes.App}>
         <h1>Hi, iam react App</h1>
-        <p>this is realle working!</p>
-        <button style={style}
-        onClick={this.togglePersonsHandler}>Switch Name</button> 
+        <p className={assignedclasses.join(' ')}>this is realle working!</p>
+        <button className={btnClass} onClick={this.togglePersonsHandler}>
+          Toggle Persons
+        </button>
         {persons}
       </div>
     );
